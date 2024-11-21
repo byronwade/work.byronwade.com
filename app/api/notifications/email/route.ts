@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { sendEmail, type NotificationType, type EmailData } from "@/lib/email";
 import { z } from "zod";
@@ -26,11 +25,6 @@ type EmailRequest = z.infer<typeof emailRequestSchema>;
 
 export async function POST(req: Request) {
 	try {
-		const { userId } = auth();
-		if (!userId) {
-			return new NextResponse("Unauthorized", { status: 401 });
-		}
-
 		const body = await req.json();
 		const { type, data, recipients } = emailRequestSchema.parse(body) as EmailRequest;
 

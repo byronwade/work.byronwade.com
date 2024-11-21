@@ -1,18 +1,9 @@
-import { auth, currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 export default async function DashboardPage() {
-	const { userId } = auth();
-	const user = await currentUser();
-
-	if (!userId || !user) {
-		redirect("/sign-in");
-	}
-
 	return (
 		<div className="container mx-auto p-6">
-			<h1 className="text-3xl font-bold mb-6">Welcome, {user.firstName}</h1>
+			<h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
 			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 				<Card>
