@@ -27,9 +27,6 @@ export async function sendEmail<T extends NotificationType>({ to, subject, type,
 			case "JOB_ALERT":
 				html = await renderAsync(JobNotification(data as JobNotificationProps));
 				break;
-			case "DAILY_DIGEST":
-			case "WEEKLY_NEWSLETTER":
-				throw new Error(`Email type ${type} not implemented yet`);
 			default:
 				throw new Error(`Unknown email type: ${type}`);
 		}
