@@ -5,7 +5,8 @@ const nextConfig = {
 		domains: ["localhost"],
 	},
 	experimental: {
-		serverActions: true,
+		inlineCss: true,
+		ppr: true,
 	},
 };
 
