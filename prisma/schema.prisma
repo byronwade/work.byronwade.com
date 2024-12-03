@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(cuid())
+  email         String      @unique
+  password      String
+  name          String?
+  address       String?
+  phone         String?
+  role          UserRole
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  jobPosts      JobPost[]
+  contractor    Contractor?
+
+  @@map("users")
+}
+
+enum UserRole {
+  POSTER
+  RECEIVER
+}
+
+model JobPost {
+  id                  String    @id @default(cuid())
+  userId              String
+  title               String
+  description         String
+  budget              Decimal?
+  images              String[]
+  location            String
+  exactLocationHidden Boolean   @default(true)
+  contactPreference   ContactMethod
+  status             JobStatus @default(OPEN)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+  leads              Lead[]
+
+  @@map("job_posts")
+}
+
+model Contractor {
+  id             String         @id @default(cuid())
+  userId         String         @unique
+  companyName    String
+  servicesOffered String[]
+  bio            String
+  location       String
+  serviceArea    String[]
+  verified       Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  user           User           @relation(fields: [userId], references: [id])
+  leads          Lead[]
+  verifications  Verification[]
+
+  @@map("contractors")
+}
+
+model Lead {
+  id           String       @id @default(cuid())
+  jobPostId    String
+  contractorId String
+  status       LeadStatus   @default(SENT)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  jobPost      JobPost      @relation(fields: [jobPostId], references: [id])
+  contractor   Contractor   @relation(fields: [contractorId], references: [id])
+
+  @@map("leads")
+}
+
+model Verification {
+  id              String            @id @default(cuid())
+  contractorId    String
+  verificationType VerificationType
+  status          VerificationStatus @default(PENDING)
+  documents       String[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  contractor      Contractor        @relation(fields: [contractorId], references: [id])
+
+  @@map("verifications")
+}
+
+enum ContactMethod {
+  EMAIL
+  PHONE
+  TEMPORARY_EMAIL
+  TEMPORARY_PHONE
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+enum LeadStatus {
+  SENT
+  VIEWED
+  RESPONDED
+}
+
+enum VerificationType {
+  IDENTITY
+  LICENSE
+  CERTIFICATION
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model TemporaryCommunication {
+  id            String   @id @default(cuid())
+  tempAddress   String   @unique // email or phone
+  realAddress   String   // actual recipient email or phone
+  type          CommunicationType
+  expiresAt     DateTime
+  usesLeft      Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("temporary_communications")
+}
+
+enum CommunicationType {
+  EMAIL
+  PHONE
+}
+
+// Add other models as defined in README... 

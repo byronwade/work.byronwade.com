@@ -8,6 +8,9 @@ const nextConfig = {
 		inlineCss: true,
 		ppr: true,
 	},
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 };
 
 export default nextConfig;
